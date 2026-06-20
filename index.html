@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Juegos educativos interactivos para estudiantes de la Escuela Jorge Newbery en Unquillo.">
+    <meta name="keywords" content="Escuela Jorge Newbery, Unquillo, juegos educativos, primaria, matemática, lengua">
+    <title>Escuela Jorge Newbery - Unquillo</title>
+    <style>
+        /* Estilos generales */
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: #f4f7f6; color: #333; scroll-behavior: smooth; }
+
+        /* Encabezado */
+        header { background: linear-gradient(135deg, #00529b, #007acc); color: white; text-align: center; padding: 3rem 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        header h1 { margin: 0; font-size: 2.5rem; letter-spacing: 1px; }
+        header p { font-size: 1.2rem; margin-top: 10px; font-style: italic; color: #e9f2f9; }
+        .etiqueta-centenario { background-color: #ff9800; color: white; padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; display: inline-block; margin-top: 10px; }
+
+        /* Menú de navegación */
+        nav { background-color: #333; display: flex; justify-content: center; padding: 10px 0; position: sticky; top: 0; z-index: 100; flex-wrap: wrap; }
+        nav a { color: white; text-decoration: none; padding: 10px 20px; margin: 5px; font-weight: bold; border-radius: 5px; transition: background 0.3s; }
+        nav a:hover { background-color: #007acc; }
+        .nav-btn-juegos { background-color: #ff9800; color: white !important; }
+        .nav-btn-juegos:hover { background-color: #e68a00 !important; }
+
+        /* Contenido principal */
+        .container { max-width: 900px; margin: 30px auto; padding: 0 20px; }
+        .seccion { background-color: white; padding: 30px; margin-bottom: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+        .seccion h2 { color: #00529b; border-bottom: 2px solid #007acc; padding-bottom: 10px; margin-top: 0; }
+
+        /* --- ESTILOS DE LOS JUEGOS --- */
+        .tabs-grados { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .btn-tab { background-color: #e9f2f9; color: #00529b; border: 2px solid #00529b; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.3s; flex: 1; min-width: 130px; font-size: 1.1rem;}
+        .btn-tab:hover, .btn-tab.activo { background-color: #00529b; color: white; }
+        
+        .area-juego { background-color: #fffde7; padding: 25px; border-radius: 8px; border: 2px dashed #ffb300; text-align: center; display: none; }
+        .area-juego.activo { display: block; animation: aparecer 0.5s ease-in-out; }
+        @keyframes aparecer { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Juego 1: Memotest */
+        .grid-memoria { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; max-width: 400px; margin: 20px auto; }
+        .carta { background-color: #007acc; height: 80px; border-radius: 10px; display: flex; justify-content: center; align-items: center; font-size: 2.5rem; color: transparent; cursor: pointer; box-shadow: 0 4px 0 #00529b; transition: all 0.2s; user-select: none; }
+        .carta:active { transform: translateY(4px); box-shadow: 0 0 0 #00529b; }
+        .carta.volteada { background-color: white; color: initial; box-shadow: 0 4px 0 #ccc; cursor: default; transform: scale(1.05); }
+        .carta.encontrada { background-color: #c8e6c9; color: initial; box-shadow: 0 4px 0 #81c784; cursor: default; opacity: 0.8; }
+        
+        /* Juego 2: Trivia */
+        .opciones-trivia { display: flex; flex-direction: column; gap: 10px; max-width: 500px; margin: 20px auto; }
+        .btn-opcion { background-color: #f4f7f6; border: 2px solid #ccc; padding: 15px; border-radius: 8px; font-size: 1.1rem; cursor: pointer; transition: 0.2s; text-align: left; font-weight: bold; }
+        .btn-opcion:hover { border-color: #007acc; background-color: #e9f2f9; }
+        .btn-opcion.correcta { background-color: #c8e6c9; border-color: #4CAF50; color: #2e7d32; }
+        .btn-opcion.incorrecta { background-color: #ffcdd2; border-color: #f44336; color: #c62828; }
+        .puntaje-flotante { font-size: 1.5rem; font-weight: bold; color: #ff9800; margin-bottom: 10px; }
+
+        /* Juego 3: Avión */
+        .cielo { position: relative; width: 100%; height: 300px; background: linear-gradient(to bottom, #4fc3f7, #e1f5fe); border-radius: 12px; overflow: hidden; margin: 15px auto; cursor: crosshair; box-shadow: inset 0 0 10px rgba(0,0,0,0.1); border: 2px solid #81d4fa;}
+        .avion-objetivo { position: absolute; top: 100px; left: 50%; font-size: 3rem; user-select: none; transition: top 0.6s ease-out, left 0.6s ease-out; cursor: pointer; filter: drop-shadow(2px 4px 2px rgba(0,0,0,0.2)); }
+        .avion-objetivo:active { transform: scale(0.8); }
+
+        /* Botón general */
+        .btn-reiniciar { background-color: #ff9800; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 1rem; margin-top: 15px; }
+        .btn-reiniciar:hover { background-color: #e68a00; }
+
+        /* Contacto Grid */
+        .grid-contacto { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px; }
+        .item-contacto { background-color: #f4f7f6; padding: 15px; border-radius: 8px; border-left: 5px solid #00529b; }
+
+        footer { background-color: #222; color: #aaa; text-align: center; padding: 20px 0; margin-top: 40px; }
+    </style>
+</head>
+<body id="inicio" onload="iniciarJuegos()">
+
+    <header>
+        <h1>Escuela Jorge Newbery</h1>
+        <p>Volando hacia el futuro en las Sierras Chicas</p>
+        <div class="etiqueta-centenario">⭐ ¡Celebramos nuestros 100 años de historia! (1924 - 2024)</div>
+    </header>
+
+    <nav>
+        <a href="#inicio">Inicio</a>
+        <a href="#institucional">Institucional</a>
+        <a href="#juegos" class="nav-btn-juegos">🎮 EducaNewbery</a>
+        <a href="#contacto">Contacto</a>
+    </nav>
+
+    <div class="container">
+        
+        <div id="institucional" class="seccion">
+            <h2>Nuestra Institución</h2>
+            <p>La <strong>Escuela Primaria Jorge Newbery</strong> es un pilar fundamental en la educación pública de Unquillo. Con un siglo de trayectoria, fomentamos en nuestros estudiantes el deseo de superarse.</p>
+            <ul>
+                <li><strong>CUE:</strong> 140370500</li>
+                <li><strong>Nivel Educativo:</strong> Educación Primaria Común.</li>
+                <li><strong>Dependencia:</strong> Ministerio de Educación de la Provincia de Córdoba.</li>
+            </ul>
+        </div>
+
+        <!-- SECCIÓN DE JUEGOS INTERACTIVOS -->
+        <div id="juegos" class="seccion">
+            <h2>🎮 Plataforma EducaNewbery Interactiva</h2>
+            <p>Selecciona tu juego y pon a prueba tus habilidades:</p>
+            
+            <!-- Ahora hay 3 pestañas -->
+            <div class="tabs-grados">
+                <button class="btn-tab activo" onclick="abrirJuego('juego-memoria', this)">🧠 Memotest (1° a 3°)</button>
+                <button class="btn-tab" onclick="abrirJuego('juego-trivia', this)">💡 Trivia (4° a 6°)</button>
+                <button class="btn-tab" onclick="abrirJuego('juego-avion', this)">✈️ Atrapa el Avión (Todos)</button>
+            </div>
+
+            <!-- JUEGO 1: MEMOTEST -->
+            <div id="juego-memoria" class="area-juego activo">
+                <h3 style="color: #00529b; margin-top:0;">🧩 Memotest Escolar</h3>
+                <p>Encuentra los pares de dibujos iguales tocando las cartas.</p>
+                <div id="tablero-memoria" class="grid-memoria"></div>
+                <h4 id="mensaje-memoria" style="color: #4CAF50; min-height: 20px;"></h4>
+                <button class="btn-reiniciar" onclick="iniciarMemoria()">🔄 Volver a mezclar</button>
+            </div>
+
+            <!-- JUEGO 2: TRIVIA INTERACTIVA -->
+            <div id="juego-trivia" class="area-juego">
+                <h3 style="color: #ff9800; margin-top:0;">💡 Trivia Desafío Múltiple</h3>
+                <div class="puntaje-flotante">Puntos: <span id="puntaje-texto">0</span></div>
+                <p style="font-size: 1.3rem; font-weight: bold;" id="pregunta-trivia"></p>
+                
+                <div id="opciones-contenedor" class="opciones-trivia"></div>
+                
+                <h4 id="mensaje-trivia" style="min-height: 20px;"></h4>
+                <button id="btn-siguiente-trivia" class="btn-reiniciar" style="display:none;" onclick="generarPreguntaTrivia()">Siguiente Pregunta ➡️</button>
+            </div>
+
+            <!-- JUEGO 3: ATRAPA EL AVIÓN -->
+            <div id="juego-avion" class="area-juego">
+                <h3 style="color: #0288d1; margin-top:0;">✈️ ¡Atrapa el Avión de Newbery!</h3>
+                <div class="puntaje-flotante">Aviones Atrapados: <span id="puntaje-avion">0</span></div>
+                <p>El avión vuela muy rápido. ¡Haz clic sobre él antes de que se mueva!</p>
+                
+                <div class="cielo" id="zona-vuelo">
+                    <div id="el-avion" class="avion-objetivo" onmousedown="atraparAvion()">🛩️</div>
+                </div>
+                
+                <button class="btn-reiniciar" onclick="iniciarVuelo()">🚀 Iniciar Vuelo</button>
+            </div>
+        </div>
+
+        <div id="contacto" class="seccion">
+            <h2>Información de Contacto</h2>
+            <div class="grid-contacto">
+                <div class="item-contacto">
+                    <h3>📍 Dirección</h3>
+                    <p>Lavalle 165, B° La Providencia.<br>Unquillo, Córdoba.<br>CP: X5109.</p>
+                </div>
+                <div class="item-contacto">
+                    <h3>📞 Teléfono</h3>
+                    <p>Fijo: <strong>(03543) 487150</strong></p>
+                </div>
+                <div class="item-contacto">
+                    <h3>✉️ Email</h3>
+                    <p>newberyjorge@hotmail.com<br>ee1403705@me.cba.gov.ar</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Escuela Pública Jorge Newbery - Unquillo, Córdoba.</p>
+    </footer>
+
+    <!-- LÓGICA DE LOS JUEGOS -->
+    <script>
+        // --- Navegación de Pestañas ---
+        function abrirJuego(idJuego, boton) {
+            document.querySelectorAll('.area-juego').forEach(el => el.classList.remove('activo'));
+            document.querySelectorAll('.btn-tab').forEach(el => el.classList.remove('activo'));
+            document.getElementById(idJuego).classList.add('activo');
+            boton.classList.add('activo');
+        }
+
+        function iniciarJuegos() {
+            iniciarMemoria();
+            iniciarTrivia();
+            // El avión espera a que el usuario presione "Iniciar Vuelo"
+        }
+
+        // --- LÓGICA JUEGO 1: MEMOTEST ---
+        const emojisBase = ['🍎', '🚀', '🐶', '⚽', '🎨', '📚'];
+        let tablero = [];
+        let cartasSeleccionadas = [];
+        let paresEncontrados = 0;
+        let bloqueado = false;
+
+        function iniciarMemoria() {
+            const contenedor = document.getElementById('tablero-memoria');
+            contenedor.innerHTML = '';
+            document.getElementById('mensaje-memoria').innerText = '';
+            cartasSeleccionadas = [];
+            paresEncontrados = 0;
+            bloqueado = false;
+            tablero = [...emojisBase, ...emojisBase].sort(() => Math.random() - 0.5);
+
+            tablero.forEach((emoji, index) => {
+                const carta = document.createElement('div');
+                carta.classList.add('carta');
+                carta.dataset.indice = index;
+                carta.onclick = () => voltearCarta(carta, emoji);
+                contenedor.appendChild(carta);
+            });
+        }
+
+        function voltearCarta(carta, emoji) {
+            if (bloqueado || carta.classList.contains('volteada') || carta.classList.contains('encontrada')) return;
+            carta.classList.add('volteada');
+            carta.innerText = emoji;
+            cartasSeleccionadas.push({ carta, emoji });
+
+            if (cartasSeleccionadas.length === 2) {
+                bloqueado = true;
+                verificarPar();
+            }
+        }
+
+        function verificarPar() {
+            const [carta1, carta2] = cartasSeleccionadas;
+            if (carta1.emoji === carta2.emoji) {
+                setTimeout(() => {
+                    carta1.carta.classList.replace('volteada', 'encontrada');
+                    carta2.carta.classList.replace('volteada', 'encontrada');
+                    paresEncontrados++;
+                    cartasSeleccionadas = [];
+                    bloqueado = false;
+                    if (paresEncontrados === emojisBase.length) {
+                        document.getElementById('mensaje-memoria').innerText = "¡FELICITACIONES! Encontraste todos los pares 🎉";
+                    }
+                }, 500);
+            } else {
+                setTimeout(() => {
+                    carta1.carta.classList.remove('volteada');
+                    carta1.carta.innerText = '';
+                    carta2.carta.classList.remove('volteada');
+                    carta2.carta.innerText = '';
+                    cartasSeleccionadas = [];
+                    bloqueado = false;
+                }, 1000);
+            }
+        }
+
+        // --- LÓGICA JUEGO 2: TRIVIA INTERACTIVA ---
+        const preguntasTrivia = [
+            { q: "¿En qué provincia se encuentra Unquillo?", opciones: ["Buenos Aires", "Córdoba", "Mendoza", "Santa Fe"], correcta: 1 },
+            { q: "¿Quién fue Jorge Newbery?", opciones: ["Un presidente", "Un famoso aviador", "Un escritor", "Un pintor"], correcta: 1 },
+            { q: "¿Cuánto es 8 x 7?", opciones: ["54", "56", "64", "48"], correcta: 1 },
+            { q: "El océano que baña las costas de Argentina es el...", opciones: ["Pacífico", "Índico", "Atlántico", "Antártico"], correcta: 2 },
+            { q: "¿Qué colores tiene la bandera de Córdoba?", opciones: ["Rojo, Blanco y Azul", "Celeste y Blanco", "Amarillo y Negro", "Verde y Rojo"], correcta: 0 }
+        ];
+
+        let puntajeTrivia = 0;
+        let preguntaActual = {};
+
+        function iniciarTrivia() {
+            puntajeTrivia = 0;
+            document.getElementById('puntaje-texto').innerText = puntajeTrivia;
+            generarPreguntaTrivia();
+        }
+
+        function generarPreguntaTrivia() {
+            document.getElementById('btn-siguiente-trivia').style.display = 'none';
+            document.getElementById('mensaje-trivia').innerText = '';
+            preguntaActual = preguntasTrivia[Math.floor(Math.random() * preguntasTrivia.length)];
+            document.getElementById('pregunta-trivia').innerText = preguntaActual.q;
+
+            const contenedorOpciones = document.getElementById('opciones-contenedor');
+            contenedorOpciones.innerHTML = '';
+
+            preguntaActual.opciones.forEach((opcion, index) => {
+                const btn = document.createElement('button');
+                btn.classList.add('btn-opcion');
+                btn.innerText = opcion;
+                btn.onclick = () => verificarRespuestaTrivia(btn, index);
+                contenedorOpciones.appendChild(btn);
+            });
+        }
+
+        function verificarRespuestaTrivia(btnSeleccionado, indiceSeleccionado) {
+            const botones = document.querySelectorAll('.btn-opcion');
+            botones.forEach(b => b.onclick = null);
+
+            if (indiceSeleccionado === preguntaActual.correcta) {
+                btnSeleccionado.classList.add('correcta');
+                puntajeTrivia += 10;
+                document.getElementById('puntaje-texto').innerText = puntajeTrivia;
+                document.getElementById('mensaje-trivia').innerText = "¡Excelente! Respuesta correcta ⭐";
+                document.getElementById('mensaje-trivia').style.color = "#4CAF50";
+            } else {
+                btnSeleccionado.classList.add('incorrecta');
+                botones[preguntaActual.correcta].classList.add('correcta');
+                document.getElementById('mensaje-trivia').innerText = "¡Ups! La respuesta correcta está en verde.";
+                document.getElementById('mensaje-trivia').style.color = "#f44336";
+            }
+            document.getElementById('btn-siguiente-trivia').style.display = 'inline-block';
+        }
+
+        // --- LÓGICA JUEGO 3: ATRAPA EL AVIÓN ---
+        let puntajeAvion = 0;
+        let intervaloVuelo;
+
+        function iniciarVuelo() {
+            puntajeAvion = 0;
+            document.getElementById('puntaje-avion').innerText = puntajeAvion;
+            moverAvion();
+            // Limpia el intervalo anterior por si el usuario le da muchas veces al botón
+            clearInterval(intervaloVuelo);
+            // Mueve el avión automáticamente cada 1.2 segundos
+            intervaloVuelo = setInterval(moverAvion, 1200); 
+        }
+
+        function moverAvion() {
+            const zona = document.getElementById('zona-vuelo');
+            const avion = document.getElementById('el-avion');
+            
+            // Calculamos el espacio disponible para que el avión no se salga de la caja
+            const maxLeft = zona.clientWidth - 60; 
+            const maxTop = zona.clientHeight - 60;
+            
+            const randomLeft = Math.floor(Math.random() * maxLeft);
+            const randomTop = Math.floor(Math.random() * maxTop);
+            
+            avion.style.left = randomLeft + 'px';
+            avion.style.top = randomTop + 'px';
+        }
+
+        function atraparAvion() {
+            puntajeAvion++;
+            document.getElementById('puntaje-avion').innerText = puntajeAvion;
+            
+            // Efecto visual rápido al atraparlo
+            const avion = document.getElementById('el-avion');
+            avion.innerText = "💥";
+            
+            setTimeout(() => {
+                avion.innerText = "🛩️";
+                moverAvion(); // Se escapa inmediatamente a otro lado
+            }, 300);
+        }
+    </script>
+</body>
+</html>
